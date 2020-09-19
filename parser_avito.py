@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-URL = 'https://www.avito.ru/moskva/avtomobili/s_probegom/bmw-ASgBAgICAkSGFMjmAeC2DeSXKA?cd=1' # Укажите URL адрес avito.ru
+URL = 'https://www.avito.ru/moskva/avtomobili/s_probegom/bmw-ASgBAgICAkSGFMjmAeC2DeSXKA?cd=1' #Укажите URL адрес avito.ru
 HEADERS = {
     'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
     'accept':'*/*'
@@ -29,11 +29,16 @@ def get_content(html):
 
     cars = []
     for item in items:
+        station_metro = item.find('span', class_='item-address-georeferences-item__content') #после теста отбило ошибку из-за не указаной станции метро в объявлении
+        if station_metro:
+            station_metro = station_metro.get_text(strip='True')
+        else:
+            station_metro = 'Станция метро не указана'
         cars.append({
             'title': item.find('a', class_='snippet-link').get_text(strip=True), #название объявления
             'link': DOMAIN + item.find('a', class_='snippet-link').get('href'), #ссылка на объявление
             'price': item.find('div', class_='snippet-price-row').get_text(strip='True'), #цена в объявлении
-            #'station_metro': item.find('span', class_='item-address-georeferences-item__content').get_text(strip='True'), #станция метро продавца
+            'station_metro': station_metro, #станция метро продавца
         })
     return cars
 
