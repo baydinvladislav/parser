@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
-URL = 'https://www.avito.ru/moskva/avtomobili/bmw-ASgBAgICAUTgtg3klyg?cd=1'
+URL = 'https://www.avito.ru/moskva/avtomobili/s_probegom/bmw-ASgBAgICAkSGFMjmAeC2DeSXKA?cd=1'
 HEADERS = {
     'user-agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36',
     'accept':'*/*'
