@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+import csv
+import os
 
 URL = 'https://www.avito.ru/moskva/avtomobili/s_probegom/bmw-ASgBAgICAkSGFMjmAeC2DeSXKA?cd=1' #Укажите URL адрес avito.ru
 HEADERS = {
@@ -7,7 +9,7 @@ HEADERS = {
     'accept':'*/*'
 }
 DOMAIN = 'https://www.avito.ru'
-
+FILE = 'cars.csv' #название файла с автомобилями
 
 def get_html(url, params=None):
     response = requests.get(url, headers=HEADERS, params=params)
@@ -43,7 +45,17 @@ def get_content(html):
     return cars
 
 
+def save_csv(items, path):
+    with open(path, 'w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file, delimiter=';')
+        writer.writerow(['Марка','Цена','Метро','Ссылка'])
+        for item in items:
+            writer.writerow([item['title'], item['price'], item['station_metro'], item['link']])
+
+
 def parse():
+    URL = input('Введите адрес ссылки для сбора данных: ')
+    URL = URL.strip()
     html = get_html(URL)
     if html.status_code == 200:
         cars = []
@@ -52,8 +64,9 @@ def parse():
             print(f'Парсинг страницы {a} из {pages_count}...')
             html = get_html(URL, params={'p':a})
             cars.extend(get_content(html.text))
-            #cars = get_content(html.text)
-        print(cars)
+        save_csv(cars, FILE)
+        print(f'Получено {len(cars)} автомобилей.')
+        os.startfile(FILE)
     else:
         print('Не удалось получить ответ от web-страницы')
 
