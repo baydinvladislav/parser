@@ -12,11 +12,13 @@ DOMAIN = 'https://www.avito.ru'
 FILE = 'cars.csv' #название файла с автомобилями
 
 def get_html(url, params=None):
+    '''Получение ответа от сервера авито'''
     response = requests.get(url, headers=HEADERS, params=params)
     return response
 
 
 def get_pages_count(html):
+    '''Получаем контент со всех страниц пагинации'''
     soup = BeautifulSoup(html, 'html.parser')
     page = soup.find_all('span', class_='pagination-item-1WyVp')
     if page:
@@ -26,6 +28,7 @@ def get_pages_count(html):
 
 
 def get_content(html):
+    '''Указываем программе какие блоки информации мы хотим получить'''
     soup = BeautifulSoup(html, 'html.parser')
     items = soup.find_all('div', class_='item__line')
 
@@ -46,6 +49,11 @@ def get_content(html):
 
 
 def save_csv(items, path):
+    '''Сохранение полученного списка автомобилей в файл CSV.
+    Файл сохраняется в папку с файлом программы, с именем "cars.csv"
+    При повторном сборе информации, старый файл cars необходимо удалить/пренести из папки.
+    Автоматический запуск файла, через стандартное приложение чтения файлов CSV.
+    '''
     with open(path, 'w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file, delimiter=';')
         writer.writerow(['Марка','Цена','Метро','Ссылка'])
@@ -54,6 +62,9 @@ def save_csv(items, path):
 
 
 def parse():
+    '''Объединяем все предыдущие функции,
+    также добавляем вывод информации на экран для вазимодействия с пользователем.
+    '''
     URL = input('Введите адрес ссылки для сбора данных: ')
     URL = URL.strip()
     html = get_html(URL)
